@@ -14,6 +14,9 @@ namespace AttributeAndReflection
     [TestAttribute]
     class MyTestSuite { }
 
+    [TestAttribute]
+    class YourTestSuite { }
+
 
     // 3. This Program.cs file has 3 types 
     // TestAttributes, MyTestSuite and Program class
@@ -25,24 +28,14 @@ namespace AttributeAndReflection
         {
 
 
-            foreach (Type type in Assembly.GetExecutingAssembly().GetTypes())
+
+            // Using Linq 
+            var testSuites = from type in Assembly.GetExecutingAssembly().GetTypes()
+                             where type.GetCustomAttributes().Any(a => a is TestAttribute)
+                             select type;
+            foreach (var t in testSuites)
             {
-                // To find out about Type object inside foreach above we click it and press F12
-                // In programs like c++ once we compile code these info gets vapourized.
-                
-
-                // To find out the name of your custom attribues 
-                // we put false to exclude inheritted attributes
-
-                // Attribues are Metadata that does not do anything unless we specify something.
-                foreach (Attribute a in type.GetCustomAttributes(false))
-                {
-                    if (a is TestAttribute)
-                    {
-                        Console.WriteLine($"{type.Name} is a test suite");
-                    }
-                }
-                Console.WriteLine(type.Name);
+                Console.WriteLine(t.Name);
             }
             Console.ReadKey();
         }
